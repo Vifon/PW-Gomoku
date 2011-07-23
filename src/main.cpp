@@ -4,9 +4,9 @@ void curPlayer(square turn)
 {
     mvaddstr(0, 0, "Current player: ");
     if (turn == GUMA)
-        addch('1');
+        addch('Red');
     else
-        addch('2');
+        addch('Blue');
 }
 
 int main(int argc, char *argv[])
@@ -109,6 +109,9 @@ int main(int argc, char *argv[])
 
     endwin();
     
-    printf("%c is a winrar\n", turn);
+    if (turn == GUMA)
+        puts("Red player is a winrar");
+    else
+        puts("Blue player is a winrar");
     return 0;
 }
