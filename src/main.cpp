@@ -1,57 +1,78 @@
-#include "board.hpp"
+#include "board_curses.hpp"
+
+void curPlayer(square turn)
+{
+    mvaddstr(0, 0, "Current player: ");
+    if (turn == GUMA)
+        addch('1');
+    else
+        addch('2');
+}
 
 int main(int argc, char *argv[])
 {
     initscr();
     cbreak();
-    keypad(stdscr, 1);
     noecho();
     start_color();
     mousemask(BUTTON1_CLICKED, NULL);
     mouseinterval(0);
-    refresh();
 
-    int x,y;
-    square turn = GUMA;
-    bool win = false;
-    Board b;
-    int ch = 0;
-    MEVENT event;
-    b.print(turn);
-    move(1,0);
-    while(!win)
+    init_pair(0, COLOR_WHITE, COLOR_BLACK);
+    init_pair(1, COLOR_RED, COLOR_BLACK);
+    init_pair(2, COLOR_BLUE, COLOR_BLACK);
+
+    int          x,y;
+    int          ch      = 0;
+    square       turn    = GUMA;
+    bool         winner  = false;
+    WINDOW*      win_big = newwin(N+2, N+2, 1, 0);
+    WINDOW*      win     = derwin(win_big, N, N, 1, 1);
+    Board_curses b(win);
+    MEVENT       event;
+    keypad(win, 1);
+    box(win_big, 0, 0);
+    curPlayer(turn);
+    refresh();
+    wrefresh(win_big);
+    b.print();
+    wmove(win, 0, 0);
+    while(!winner)
     {
-        bool mouse = false;
-        while (!mouse && (ch = getch()) != '\n')
+        bool restart_loop = false;
+        bool mouse        = false;
+        while (!mouse && (ch = wgetch(win)) != '\n')
         {
-            getyx(stdscr, y, x);
+            getyx(win, y, x);
             switch (ch)
             {
                 case KEY_UP:
-                    if (y > 1)
-                        move(--y, x);
+                    if (y > 0)
+                        wmove(win, --y, x);
                     break;
                 case KEY_DOWN:
-                    if (y < N)
-                        move(++y, x);
+                    if (y < N-1)
+                        wmove(win, ++y, x);
                     break;
                 case KEY_LEFT:
                     if (x > 0)
-                        move(y, --x);
+                        wmove(win, y, --x);
                     break;
                 case KEY_RIGHT:
                     if (x < N-1)
-                        move(y, ++x);
+                        wmove(win, y, ++x);
                     break;
                 case KEY_MOUSE:
                     if (getmouse(&event) == OK && ( event.bstate & BUTTON1_CLICKED ) )
                     {
-                        if(event.x < N &&
-                           event.x >= 0 &&
-                           event.y < N+1 &&
-                           event.y > 0)
+                        event.x -= 1;
+                        event.y -= 2;
+                        if( event.x <  N &&
+                            event.x >= 0 &&
+                            event.y <  N &&
+                            event.y >= 0 )
                         {
-                            move(event.y, event.x);
+                            wmove(win, event.y, event.x);
                             mouse = true;
                         }
                     }
@@ -60,20 +81,30 @@ int main(int argc, char *argv[])
                     break;
             }
         }
-        getyx(stdscr, y,x);
+        getyx(win, y, x);
         
         try
         {
-            win = b.move(turn,x,--y);
+            winner = b.move(turn, x, y);
         }
         catch (square_occupied)
         {
-            continue;
+            restart_loop = true;
         }
-        if (!win)
-            if (turn == GUMA) turn = BATON;
-            else turn = GUMA;
-        b.print(turn);
+        if (!restart_loop)
+        {
+            if (!winner)
+            {
+                if (turn == GUMA)
+                    turn = BATON;
+                else
+                    turn = GUMA;
+            }
+            b.print();
+            refresh();
+            curPlayer(turn);
+            wmove(win, y, x);
+        }
     }
 
     endwin();

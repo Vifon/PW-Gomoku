@@ -2,23 +2,29 @@
 #define _BOARD_H_ 1
 
 #include <exception>
-#include <ncurses.h>
 
-#define N 15
+#ifndef N
+    #define N 15
+#endif
 
 class square_occupied : std::exception { };
 
-enum square { NIC = 'o', GUMA = 'X', BATON = 'Y' }; // sorry for the in-joke ;)
+enum square { NIC, GUMA, BATON }; // sorry for the in-joke ;)
 
 class Board
 {
-  public:
-    Board();
-    bool move(square,int,int);
-    void print(square);
+  private:
+    bool check(int x, int y);
+    bool checkLine(int x, int y, int hmove, int vmove, int range);
+    
   protected:
     square arr[N][N];
-    bool check(int,int);
+
+  public:
+    Board();
+    virtual ~Board();
+    bool move(square turn, int x, int y);
+    virtual void print() = 0;
 };
 
 #endif

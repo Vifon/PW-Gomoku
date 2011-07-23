@@ -1,10 +1,10 @@
-CC=gcc
-CXX=g++
+CC=clang
+CXX=clang++
 CFLAGS=$(O) -Wall
 CXXFLAGS=$(CFLAGS) 
 O=-O2
 LFLAGS=-l ncurses
-OBJS=objs/main.o objs/board.o
+OBJS=objs/main.o objs/board_curses.o objs/board.o
 
 .PHONY: all
 all: objs gomoku
@@ -13,10 +13,13 @@ all: objs gomoku
 	@ echo "    LINK ./gomoku"
 	@ $(CXX) $(LFLAGS) $(OBJS) -o "./gomoku"
 
-objs/main.o: src/main.cpp src/board.hpp
+objs/main.o: src/main.cpp src/board_curses.hpp src/board.hpp
 	@ echo "    CXX  src/main.cpp"
 	@ $(CXX) $(CXXFLAGS) -c "src/main.cpp" -o $@
-objs/board.o: src/board.cpp
+objs/board_curses.o: src/board_curses.cpp src/board_curses.hpp src/board.hpp
+	@ echo "    CXX  src/board_curses.cpp"
+	@ $(CXX) $(CXXFLAGS) -c "src/board_curses.cpp" -o $@
+objs/board.o: src/board.cpp src/board.hpp
 	@ echo "    CXX  src/board.cpp"
 	@ $(CXX) $(CXXFLAGS) -c "src/board.cpp" -o $@
 
