@@ -4,9 +4,9 @@ void curPlayer(square turn)
 {
     mvaddstr(0, 0, "Current player: ");
     if (turn == GUMA)
-        addch('Red');
+        addstr("Red ");
     else
-        addch('Blue');
+        addstr("Blue");
 }
 
 int main(int argc, char *argv[])
@@ -101,8 +101,8 @@ int main(int argc, char *argv[])
                     turn = GUMA;
             }
             b.print();
-            refresh();
             curPlayer(turn);
+            refresh();
             wmove(win, y, x);
         }
     }
