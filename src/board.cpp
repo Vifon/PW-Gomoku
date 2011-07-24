@@ -24,10 +24,10 @@ bool Board::move(square turn, int x, int y)
 
 bool Board::check(int x, int y)
 {
-    return ( checkLine(x, y,  1, 0, 5) ||
-             checkLine(x, y,  0, 1, 5) ||
-             checkLine(x, y,  1, 1, 5) ||
-             checkLine(x, y, -1, 1, 5) );
+    return ( checkLine(x, y,  1, 0, GOAL) ||
+             checkLine(x, y,  0, 1, GOAL) ||
+             checkLine(x, y,  1, 1, GOAL) ||
+             checkLine(x, y, -1, 1, GOAL) );
 }
 
 bool Board::checkLine(int x, int y, int hstep, int vstep, int range)

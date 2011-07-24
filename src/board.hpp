@@ -7,6 +7,10 @@
     #define N 15
 #endif
 
+#ifndef GOAL
+    #define GOAL 5
+#endif
+
 class square_occupied : std::exception { };
 
 enum square { NIC, GUMA, BATON }; // sorry for the in-joke ;)
