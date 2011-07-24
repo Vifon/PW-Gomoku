@@ -1,5 +1,5 @@
-CC=clang
-CXX=clang++
+CC=gcc
+CXX=g++
 CFLAGS=$(O) -Wall
 CXXFLAGS=$(CFLAGS) 
 O=-O2
